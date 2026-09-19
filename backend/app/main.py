@@ -1,10 +1,8 @@
 from contextlib import asynccontextmanager
-import os
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse, RedirectResponse
 
 from app.core.config import settings
 from app.core.logging import setup_logging, RequestIDMiddleware
@@ -23,8 +21,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="ContractLens API",
     version="1.0.0",
-    description="AI Contract Intelligence Platform",
+    description="AI Contract Intelligence & Grounded Risk Engine",
     lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
 # CORS configuration
@@ -75,29 +75,12 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     )
 
 
+# Root redirect to OpenAPI Swagger Docs
+@app.get("/", include_in_schema=False)
+async def root_redirect():
+    return RedirectResponse(url="/docs")
+
+
 # Include API routes
 app.include_router(health_router)
 app.include_router(api_v1_router)
-
-# Serve Frontend SPA from frontend/dist if built
-frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
-if os.path.exists(frontend_dist):
-    assets_dir = os.path.join(frontend_dist, "assets")
-    if os.path.exists(assets_dir):
-        app.mount("/assets", StaticFiles(directory=assets_dir), name="static_assets")
-
-    @app.get("/{full_path:path}")
-    async def serve_spa(request: Request, full_path: str):
-        # Do not intercept API or docs routes
-        if full_path.startswith("api/") or full_path.startswith("health") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
-            raise HTTPException(status_code=404, detail="API route not found")
-
-        file_path = os.path.join(frontend_dist, full_path)
-        if os.path.isfile(file_path):
-            return FileResponse(file_path)
-
-        index_path = os.path.join(frontend_dist, "index.html")
-        if os.path.exists(index_path):
-            return FileResponse(index_path)
-
-        raise HTTPException(status_code=404, detail="Frontend file not found")
