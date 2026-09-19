@@ -1,0 +1,29 @@
+{
+  "vendor_agreement_autorenew.pdf": {
+    "expected_clause_count": 14,
+    "expected_headings": [
+      "SECTION 1. DEFINITIONS",
+      "SECTION 2. SCOPE OF SERVICES",
+      "SECTION 3. TERM AND AUTOMATIC RENEWAL",
+      "SECTION 4. PAYMENT TERMS & FEES",
+      "SECTION 5. INTELLECTUAL PROPERTY RIGHTS",
+      "SECTION 6. CONFIDENTIALITY",
+      "SECTION 7. TERMINATION & CANCELLATION",
+      "SECTION 8. LIMITATION OF LIABILITY",
+      "SECTION 9. INDEMNIFICATION",
+      "SECTION 10. GOVERNING LAW & JURISDICTION",
+      "SECTION 11. NOTICES",
+      "SECTION 12. MISCELLANEOUS",
+      "SECTION 13. SIGNATURES"
+    ]
+  },
+  "vendor_agreement_article_format.pdf": {
+    "expected_clause_count": 4,
+    "expected_headings": [
+      "ARTICLE I. DEFINITIONS",
+      "ARTICLE II. SERVICES AND PAYMENT",
+      "ARTICLE III. CONFIDENTIALITY AND IP",
+      "ARTICLE IV. TERMINATION AND LIABILITY"
+    ]
+  }
+}

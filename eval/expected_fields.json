@@ -1,0 +1,17 @@
+{
+  "vendor_agreement_autorenew.pdf": {
+    "parties": "Meridian Tech Systems Inc., Orion Cloud Services LLC",
+    "effective_date": "2026-02-01",
+    "expiration_date": null,
+    "term_length": "2 years",
+    "renewal_type": "auto_renew",
+    "renewal_term": "1 year",
+    "notice_period_nonrenewal": "90 days",
+    "payment_terms": "Net 30",
+    "contract_value_or_fees": "$120,000",
+    "liability_cap": "$250,000",
+    "termination_for_convenience": "true",
+    "termination_notice_period": "60 days",
+    "governing_law": "Delaware"
+  }
+}

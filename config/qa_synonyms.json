@@ -1,0 +1,12 @@
+{
+  "cryptocurrency": ["crypto", "bitcoin", "digital asset", "virtual currency", "ethereum"],
+  "terminate early": ["termination for convenience", "early termination", "terminate without cause", "notice of termination", "cancel"],
+  "fees": ["charges", "price", "compensation", "costs", "payment", "rate"],
+  "liability": ["indemnity", "damages", "liability cap", "limitation of liability", "remedy"],
+  "law": ["governing law", "jurisdiction", "venue", "dispute resolution", "courts"],
+  "indemnify": ["indemnification", "hold harmless", "defend", "indemnity", "infringement"],
+  "infringement": ["intellectual property", "ip", "infringe", "patent", "copyright", "trademark"],
+  "indirect": ["consequential", "special", "punitive", "incidental", "indirect damages"],
+  "unpaid": ["late", "overdue", "interest", "default", "past due", "delinquent", "balances"],
+  "balances": ["payment", "amount", "fees", "invoices", "due"]
+}
