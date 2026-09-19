@@ -4,14 +4,17 @@ import { ChatMessage, QAMessageItem } from './ChatMessage';
 interface ChatPanelProps {
   contractId: string;
   versionId: string;
-  onHighlightQuote: (start: number, end: number, page: number) => void;
+  onHighlightQuote?: (start: number, end: number, page: number) => void;
+  onHighlightCitation?: (start: number, end: number, page: number) => void;
 }
 
 export const ChatPanel: React.FC<ChatPanelProps> = ({
   contractId,
   versionId,
   onHighlightQuote,
+  onHighlightCitation,
 }) => {
+  const triggerHighlight = onHighlightCitation || onHighlightQuote || (() => {});
   const [messages, setMessages] = useState<QAMessageItem[]>([]);
   const [inputQuestion, setInputQuestion] = useState<string>('');
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -160,7 +163,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
             <ChatMessage
               key={msg.id}
               message={msg}
-              onHighlightQuote={onHighlightQuote}
+              onHighlightQuote={triggerHighlight}
               onSelectSuggestion={(s) => handleSendQuestion(s)}
             />
           ))

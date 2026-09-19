@@ -59,10 +59,10 @@ export const ClauseSidebar: React.FC<ClauseSidebarProps> = ({
       <div key={node.id} className="space-y-1">
         <div
           onClick={() => onSelectClause(node)}
-          className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors ${
+          className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-all ${
             isSelected
-              ? 'bg-blue-600/30 text-blue-200 border border-blue-500/50'
-              : 'hover:bg-slate-800/60 text-slate-300'
+              ? 'bg-indigo-50 text-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-800 font-semibold shadow-sm'
+              : 'hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300'
           }`}
           style={{ paddingLeft: `${(node.level - 1) * 12 + 8}px` }}
         >
@@ -70,7 +70,7 @@ export const ClauseSidebar: React.FC<ClauseSidebarProps> = ({
             {hasChildren ? (
               <button
                 onClick={(e) => toggleCollapse(node.id, e)}
-                className="p-0.5 rounded hover:bg-slate-700 text-slate-400 shrink-0"
+                className="p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 shrink-0"
               >
                 {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               </button>
@@ -78,19 +78,19 @@ export const ClauseSidebar: React.FC<ClauseSidebarProps> = ({
               <span className="w-3.5 h-3.5 shrink-0" />
             )}
 
-            <span className="font-semibold text-white shrink-0">{node.number}</span>
-            <span className="truncate text-slate-400 font-normal">
+            <span className="font-bold text-slate-900 dark:text-white shrink-0">{node.number}</span>
+            <span className="truncate text-slate-600 dark:text-slate-400 font-medium">
               {node.heading || node.text.slice(0, 30)}
             </span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
             {node.clause_type && node.clause_type !== 'other' && (
-              <span className="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-indigo-300 border border-indigo-500/30 font-medium capitalize">
+              <span className="px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-slate-800 text-[10px] text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 font-semibold capitalize">
                 {node.clause_type}
               </span>
             )}
-            <span className="text-[10px] text-slate-500 font-medium">p.{node.page_start}</span>
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">p.{node.page_start}</span>
           </div>
         </div>
 
@@ -104,15 +104,15 @@ export const ClauseSidebar: React.FC<ClauseSidebarProps> = ({
   };
 
   return (
-    <div className="w-80 h-full bg-slate-900 border-r border-slate-800 flex flex-col">
+    <div className="w-80 h-full bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col transition-colors">
       {/* Search Header */}
-      <div className="p-3 border-b border-slate-800 space-y-2">
-        <div className="text-xs font-bold text-white flex items-center justify-between">
+      <div className="p-3 border-b border-slate-200 dark:border-slate-800 space-y-2">
+        <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center justify-between">
           <span className="flex items-center gap-1.5">
-            <Hash className="w-4 h-4 text-blue-400" />
+            <Hash className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
             Clause Outline
           </span>
-          <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-semibold">
+          <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold border border-slate-200 dark:border-slate-700">
             {clauses.length} Clauses
           </span>
         </div>
@@ -123,7 +123,7 @@ export const ClauseSidebar: React.FC<ClauseSidebarProps> = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Filter outline..."
-            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 border border-slate-700"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 border border-slate-200 dark:border-slate-700"
           />
         </div>
       </div>
@@ -131,7 +131,7 @@ export const ClauseSidebar: React.FC<ClauseSidebarProps> = ({
       {/* Tree View Scroll Area */}
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {clauses.length === 0 ? (
-          <div className="p-6 text-center text-xs text-slate-500">No clauses segmented yet</div>
+          <div className="p-6 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">No clauses segmented yet</div>
         ) : (
           clauses.map((node) => renderNode(node))
         )}
