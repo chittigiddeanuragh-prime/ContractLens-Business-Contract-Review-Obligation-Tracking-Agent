@@ -59,7 +59,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
     setMessages((prev) => [...prev, tempUserMsg]);
     setIsLoading(true);
 
-    try:
+    try {
       const response = await fetch(`/api/v1/contracts/${contractId}/versions/${versionId}/qa/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

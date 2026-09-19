@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldAlert, AlertTriangle, CheckCircle2, Sparkles, Filter, ChevronRight, Info } from 'lucide-react';
+import { AlertTriangle, Sparkles, ChevronRight } from 'lucide-react';
 
 export interface RiskItemData {
   id: string;

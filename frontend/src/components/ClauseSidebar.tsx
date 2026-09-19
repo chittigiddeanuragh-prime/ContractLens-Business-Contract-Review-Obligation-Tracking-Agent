@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronDown, ChevronRight, FileText, Tag, Hash } from 'lucide-react';
+import { Search, ChevronDown, ChevronRight, Hash } from 'lucide-react';
 
 export interface ClauseNode {
   id: string;

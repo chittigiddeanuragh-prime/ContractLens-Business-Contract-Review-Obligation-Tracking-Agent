@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, Plus, Search, CheckCircle2, Clock, AlertCircle, RefreshCw, Eye, Sparkles, ShieldAlert, BarChart3 } from 'lucide-react';
+import { FileText, Plus, RefreshCw, Eye, BarChart3 } from 'lucide-react';
 
 interface ContractSummary {
   id: string;
@@ -22,9 +22,8 @@ interface ContractListProps {
 export const ContractList: React.FC<ContractListProps> = ({ onSelectContract, onOpenUpload, externalSearch = '' }) => {
   const [contracts, setContracts] = useState<ContractSummary[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [search, setSearch] = useState<string>('');
 
-  const activeSearch = externalSearch || search;
+  const activeSearch = externalSearch;
 
   const fetchContracts = async () => {
     setLoading(true);

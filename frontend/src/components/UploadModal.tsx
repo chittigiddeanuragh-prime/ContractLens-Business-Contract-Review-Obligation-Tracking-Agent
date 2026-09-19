@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, X, FileText, AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Upload, X, FileText, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface UploadModalProps {
   isOpen: boolean;

@@ -16,7 +16,6 @@ export const ContractViewer: React.FC<ContractViewerProps> = ({ contractId, vers
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [zoom, setZoom] = useState<number>(100);
-  const [status, setStatus] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
@@ -41,7 +40,6 @@ export const ContractViewer: React.FC<ContractViewerProps> = ({ contractId, vers
         if (res.ok) {
           const data = await res.json();
           setTotalPages(data.page_count || 1);
-          setStatus(data.status);
           if (data.status === 'scanned_unsupported') {
             setErrorMessage(data.error_message || 'This PDF looks scanned or image-only.');
           }

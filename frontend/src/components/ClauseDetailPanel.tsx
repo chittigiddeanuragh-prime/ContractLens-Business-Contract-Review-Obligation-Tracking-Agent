@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, FileText, Tag, Link2, BookOpen, ShieldAlert } from 'lucide-react';
+import { X, FileText, Link2, BookOpen } from 'lucide-react';
 import { ClauseNode } from './ClauseSidebar';
 
 interface ClauseDetailPanelProps {

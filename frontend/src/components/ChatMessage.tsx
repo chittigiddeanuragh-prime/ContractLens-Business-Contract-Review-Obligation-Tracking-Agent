@@ -30,7 +30,7 @@ export interface QAMessageItem {
 interface ChatMessageProps {
   message: QAMessageItem;
   onHighlightQuote: (start: number, end: number, page: number) => void;
-  onSelectSuggestion?: (question: str) => void;
+  onSelectSuggestion?: (question: string) => void;
   onFeedback?: (messageId: string, rating: 'up' | 'down') => void;
 }
 
