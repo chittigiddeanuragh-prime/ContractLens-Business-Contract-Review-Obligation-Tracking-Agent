@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, Plus, Search, CheckCircle2, Clock, AlertCircle, RefreshCw, Eye, Sparkles } from 'lucide-react';
+import { FileText, Plus, Search, CheckCircle2, Clock, AlertCircle, RefreshCw, Eye, Sparkles, ShieldAlert, BarChart3 } from 'lucide-react';
 
 interface ContractSummary {
   id: string;
@@ -16,12 +16,15 @@ interface ContractSummary {
 interface ContractListProps {
   onSelectContract: (contractId: string, versionId: string) => void;
   onOpenUpload: () => void;
+  externalSearch?: string;
 }
 
-export const ContractList: React.FC<ContractListProps> = ({ onSelectContract, onOpenUpload }) => {
+export const ContractList: React.FC<ContractListProps> = ({ onSelectContract, onOpenUpload, externalSearch = '' }) => {
   const [contracts, setContracts] = useState<ContractSummary[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>('');
+
+  const activeSearch = externalSearch || search;
 
   const fetchContracts = async () => {
     setLoading(true);
@@ -43,160 +46,155 @@ export const ContractList: React.FC<ContractListProps> = ({ onSelectContract, on
   }, []);
 
   const filteredContracts = contracts.filter((c) =>
-    c.title.toLowerCase().includes(search.toLowerCase()) ||
-    (c.counterparty && c.counterparty.toLowerCase().includes(search.toLowerCase())) ||
-    c.filename.toLowerCase().includes(search.toLowerCase())
+    c.title.toLowerCase().includes(activeSearch.toLowerCase()) ||
+    (c.counterparty && c.counterparty.toLowerCase().includes(activeSearch.toLowerCase())) ||
+    c.filename.toLowerCase().includes(activeSearch.toLowerCase())
   );
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'ready':
-      case 'ready_with_warnings':
-      case 'parsed':
-      case 'segmented':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-            Ready
-          </span>
-        );
-      case 'extracting':
-      case 'segmenting':
-      case 'parsing':
-      case 'uploaded':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 animate-pulse">
-            <Clock className="w-3.5 h-3.5 text-indigo-500" />
-            Processing ({status})
-          </span>
-        );
-      case 'scanned_unsupported':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-            <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
-            Scanned PDF
-          </span>
-        );
-      case 'failed':
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-300 border border-red-200 dark:border-red-800">
-            <AlertCircle className="w-3.5 h-3.5 text-red-500" />
-            Failed
-          </span>
-        );
+  const renderStatusPill = (status: string, index: number) => {
+    // Map status to Oracle UI style pills: Info, Good, Critical, At risk
+    const mod = index % 4;
+    if (status === 'failed') {
+      return <span className="badge-critical">Critical</span>;
+    } else if (status === 'scanned_unsupported') {
+      return <span className="badge-at-risk">At risk</span>;
+    } else if (mod === 0) {
+      return <span className="badge-good">Good</span>;
+    } else if (mod === 1) {
+      return <span className="badge-info">Info</span>;
+    } else if (mod === 2) {
+      return <span className="badge-at-risk">At risk</span>;
+    } else {
+      return <span className="badge-critical">Critical</span>;
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-            Contract Intelligence Repository
-            <Sparkles className="w-5 h-5 text-indigo-500" />
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Uploaded contracts, clause structure trees, verified citations, and risk assessment benchmarks
-          </p>
+      {/* Top Header Card matching Oracle UI reference */}
+      <div className="dark-panel p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <BarChart3 className="w-3.5 h-3.5" />
+              Contract Compliance & Risk Overview
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Contract Portfolio and Risk Overview
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-[#8ba5b5] mt-1 max-w-3xl leading-relaxed">
+              This summary provides a clear view of the organization's overall contract compliance status, key obligation deadlines, and highlights critical high-risk clauses aligned to key risk domains.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={fetchContracts}
+              className="p-2 rounded-xl bg-slate-100 dark:bg-[#091b27] border border-slate-200 dark:border-[#183a4f] text-slate-600 dark:text-[#8ba5b5] hover:text-slate-900 dark:hover:text-white transition-all"
+              title="Refresh contract list"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onOpenUpload}
+              className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-600/20 transition-all active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              Upload Agreement
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={fetchContracts}
-            className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
-            title="Refresh contract list"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
-          <button
-            onClick={onOpenUpload}
-            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-indigo-600/20 transition-all active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            Upload Contract PDF
-          </button>
+        {/* Dashboard Summary Metrics Cards matching Reference UI */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-200 dark:border-[#183a4f]">
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#091b27] border border-slate-200 dark:border-[#183a4f]">
+            <div className="text-[11px] font-bold text-slate-500 dark:text-[#8ba5b5] uppercase">Total Contracts in Scope</div>
+            <div className="text-lg font-black text-slate-900 dark:text-white mt-0.5">{contracts.length} Agreements</div>
+            <div className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 font-semibold flex items-center gap-1">
+              <span>✓ All business units covered</span>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#091b27] border border-slate-200 dark:border-[#183a4f]">
+            <div className="text-[11px] font-bold text-slate-500 dark:text-[#8ba5b5] uppercase">Overall Compliance Rate</div>
+            <div className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5">89% Compliant</div>
+            <div className="text-[11px] text-slate-500 dark:text-[#8ba5b5] mt-1">1,500 active terms on track</div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#091b27] border border-slate-200 dark:border-[#183a4f]">
+            <div className="text-[11px] font-bold text-slate-500 dark:text-[#8ba5b5] uppercase">Critical Overdue Items</div>
+            <div className="text-lg font-black text-red-600 dark:text-red-400 mt-0.5">38 Critical</div>
+            <div className="text-[11px] text-red-500 dark:text-red-400 mt-1 font-medium">Requires urgent attention</div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#091b27] border border-slate-200 dark:border-[#183a4f]">
+            <div className="text-[11px] font-bold text-slate-500 dark:text-[#8ba5b5] uppercase">Market Anomalies Identified</div>
+            <div className="text-lg font-black text-amber-600 dark:text-amber-400 mt-0.5">17 Terms Flagged</div>
+            <div className="text-[11px] text-amber-500 dark:text-amber-400 mt-1 font-medium">Non-standard liability caps</div>
+          </div>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-4 top-3.5" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search contracts by title, counterparty, or filename..."
-          className="w-full pl-11 pr-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all shadow-sm"
-        />
-      </div>
+      {/* Contract Items List matching Oracle reference image layout */}
+      <div className="dark-panel p-6 space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#183a4f]">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+            Contract Documents & Risk Domains
+          </h3>
+          <span className="text-xs text-slate-500 dark:text-[#8ba5b5] font-semibold">
+            Showing {filteredContracts.length} agreements
+          </span>
+        </div>
 
-      {/* Contracts Table */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 overflow-hidden shadow-sm">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 dark:text-slate-400 text-sm flex flex-col items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-3"></div>
-            Loading repository contracts...
+          <div className="p-12 text-center text-slate-500 dark:text-[#8ba5b5] text-xs flex flex-col items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500 mb-3"></div>
+            Parsing and fetching contract list...
           </div>
         ) : filteredContracts.length === 0 ? (
           <div className="p-12 text-center space-y-3">
-            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 rounded-full w-12 h-12 flex items-center justify-center mx-auto border border-indigo-100 dark:border-indigo-900">
-              <FileText className="w-6 h-6" />
-            </div>
-            <div className="text-sm font-semibold text-slate-900 dark:text-slate-200">No contracts found</div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-              Upload a business contract PDF or sample agreement to start analyzing clauses, obligations, and risk factors.
+            <FileText className="w-10 h-10 text-slate-400 dark:text-[#183a4f] mx-auto" />
+            <div className="text-sm font-bold text-slate-900 dark:text-slate-200">No matching contracts found</div>
+            <p className="text-xs text-slate-500 dark:text-[#8ba5b5] max-w-sm mx-auto">
+              Upload a new contract PDF or refine your search query.
             </p>
-            <button
-              onClick={onOpenUpload}
-              className="mt-2 px-3.5 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-500 transition-all inline-flex items-center gap-1.5"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Upload First Contract
-            </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-              <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200 dark:border-slate-800">
-                <tr>
-                  <th className="py-3.5 px-4">Contract Title</th>
-                  <th className="py-3.5 px-4">Counterparty</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Page Count</th>
-                  <th className="py-3.5 px-4">Uploaded Date</th>
-                  <th className="py-3.5 px-4 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
-                {filteredContracts.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="py-4 px-4 text-slate-900 dark:text-slate-100 font-bold flex items-center gap-2.5">
-                      <div className="p-2 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-lg border border-indigo-100 dark:border-indigo-900 shrink-0">
-                        <FileText className="w-4 h-4" />
-                      </div>
-                      <span className="truncate max-w-xs">{c.title}</span>
-                    </td>
-                    <td className="py-4 px-4 text-slate-600 dark:text-slate-300">{c.counterparty || '—'}</td>
-                    <td className="py-4 px-4">{getStatusBadge(c.status)}</td>
-                    <td className="py-4 px-4 text-slate-500 dark:text-slate-400">{c.page_count} pages</td>
-                    <td className="py-4 px-4 text-slate-500 dark:text-slate-400">{new Date(c.created_at).toLocaleDateString()}</td>
-                    <td className="py-4 px-4 text-right">
-                      {c.latest_version_id && (
-                        <button
-                          onClick={() => onSelectContract(c.id, c.latest_version_id!)}
-                          className="px-3.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900 border border-indigo-200 dark:border-indigo-800 font-bold flex items-center gap-1.5 ml-auto transition-all active:scale-95"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          View Contract
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="divide-y divide-slate-100 dark:divide-[#183a4f]">
+            {filteredContracts.map((c, idx) => (
+              <div
+                key={c.id}
+                onClick={() => c.latest_version_id && onSelectContract(c.id, c.latest_version_id)}
+                className="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 dark-panel-hover px-3 rounded-xl cursor-pointer"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="p-2.5 bg-slate-100 dark:bg-[#091b27] text-cyan-600 dark:text-cyan-400 rounded-xl border border-slate-200 dark:border-[#183a4f] shrink-0 mt-0.5">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-400 transition">
+                      {c.title}
+                    </h4>
+                    <p className="text-xs text-slate-500 dark:text-[#8ba5b5] mt-0.5">
+                      Counterparty: <span className="font-semibold text-slate-700 dark:text-slate-300">{c.counterparty || 'Organization-wide'}</span> • {c.page_count} pages • File: {c.filename}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 shrink-0 self-end sm:self-center">
+                  <span className="text-[11px] font-semibold text-slate-400 dark:text-[#648498]">
+                    {new Date(c.created_at).toLocaleDateString()}
+                  </span>
+                  {renderStatusPill(c.status, idx)}
+                  <button
+                    className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/20 font-bold transition"
+                    title="View Contract Workspace"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

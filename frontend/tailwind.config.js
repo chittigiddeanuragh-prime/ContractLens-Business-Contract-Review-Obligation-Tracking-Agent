@@ -11,15 +11,24 @@ export default {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       colors: {
-        brand: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          900: '#312e81',
+        dark: {
+          bg: '#081621',
+          panel: '#0e2636',
+          panelHover: '#133044',
+          border: '#183a4f',
+          subtext: '#8ba5b5',
+          heading: '#ffffff',
         },
+        status: {
+          critical: '#ef4444',
+          criticalBg: '#451a1a',
+          atRisk: '#f59e0b',
+          atRiskBg: '#453014',
+          good: '#10b981',
+          goodBg: '#133e2b',
+          info: '#0ea5e9',
+          infoBg: '#0f3a4e',
+        }
       },
     },
   },
